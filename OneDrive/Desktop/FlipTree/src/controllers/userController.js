@@ -1,7 +1,9 @@
 const userModel = require("../models/userModel.js")
+const movieModel = require("../models/movieModel.js")
 const validation = require("../validations/validator.js")
 const moment = require("moment")
 const bcrypt = require("bcrypt")
+const showModel = require("../models/showModel.js")
 
 
 
@@ -62,4 +64,71 @@ const createUser = async function (req, res){
     }
 };
 
-module.exports = {createUser}
+
+
+
+
+
+
+
+//====================================  Booking Tickets  ===========================================//
+
+const bookTicket = async function (req, res){
+    try{
+        let userId = req.params.userId
+        let body = req.body
+        let {movieName, timeSlot, seats} = body
+
+        if(!validation.idMatch(userId)) return res.status(400).send({status: false, message: "Invalid userId!"})
+        let user = await userModel.findOne({_id: userId})
+        if(!user) return res.status(404).send({status: false, message: "User not found"})
+
+        if(!movieName) return res.status(400).send({status: false, message: "Movie's name is a mandatory input!"})
+        if(!validation.isValid(movieName)) return res.status(400).send({status: false, message: "The input string cannot be empty!"})
+
+        let movie = await movieModel.findOne({movieName: movieName})
+        if(!movie) {
+            return res.status(404).send({status: false, message: "Movie not found!"})
+        }else{
+            let shows = await showModel.findOne({movieId: movie._id})
+            let slots = shows.timeSlotsAndSeats // object
+
+            let isBelowThreshold = (currentValue) => currentValue == 0;
+            let values = Object.values(slots)
+            if(values.every(isBelowThreshold)) return res.status(403).send({status: false, message: "No timeslots available for this movie!"})
+
+            if(!timeSlot) return res.status(400).send({status: false, message: "Please provide with your desired timings!"})
+            if(!seats) return res.status(400).send({status: false, message: "Please provide number of seats!"})
+
+            for(let keys in obj){
+               if(keys == timeSlot){
+                if(obj[keys] > seats){
+                let data = obj[keys] - seats
+                 await showModel.findOneAndUpdate({_id: shows._id}, {timeSlotsAndSeats: data})
+                return res.send(200).send({status: true, message: `Movie ticket successfully booked for ${seats} person/s!`})
+
+                }else{
+                    return res.send(404).send({status: false, message: "No seats available for this time"})
+                }
+               }else{
+                return res.send(404).send({status: false, message: "No slot available for this time"})
+               }
+            }
+
+        }
+
+    }catch(error){
+        res.status(500).send({status: false, message: error.message})
+    }
+};
+
+
+
+
+
+
+
+
+
+
+module.exports = {createUser, bookTicket}

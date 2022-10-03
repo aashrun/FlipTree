@@ -11,6 +11,10 @@ const movieSchema = new mongoose.Schema({
         type : ObjectId,
         ref : "Theatre",
         required : true
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false
     }
 
 }, {timestamps : true})

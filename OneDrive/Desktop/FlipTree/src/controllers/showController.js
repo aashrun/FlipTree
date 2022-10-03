@@ -18,7 +18,7 @@ const createShow = async function (req, res){
         if(!movieId) return res.status(400).send({status: false, message: "Reference of the movie is mandatory!"})
         if(!validation.idMatch(movieId)) return res.status(400).send({status: false, message: "Invalid movieId!"})
 
-        let movie = await movieModel.findOne({_id: movieId})
+        let movie = await movieModel.findOne({_id: movieId, isDeleted: false})
         if(!movie) return res.status(404).send({status: false, message: "No such movie found!"})
 
 

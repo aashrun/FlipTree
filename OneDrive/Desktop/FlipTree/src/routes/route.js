@@ -11,16 +11,24 @@ const showController = require("../controllers/showController.js")
 
 router.post("/user/create", userController.createUser)
 
+router.put("/user/bookTicket", userController.bookTicket)
+
+router.put("/user/updateTicket", userController.updateTicket)
+
 
 
 //================================  Theatre Handler  ========================================//
 
 router.post("/theatre/create", theatreController.createTheatre)
 
+router.get("/theatre/getTheatres", theatreController.getTheatres)
+
 
 //================================  Movie Handler  ========================================//
 
 router.post("/movie/create", movieController.createMovie)
+
+router.get("/movie/getMovies", movieController.getMovies)
 
 
 //================================  Movie Handler  ========================================//
