@@ -100,7 +100,7 @@ const bookTicket = async function (req, res){
             if(!timeSlot) return res.status(400).send({status: false, message: "Please provide with your desired timings!"})
             if(!seats) return res.status(400).send({status: false, message: "Please provide number of seats!"})
 
-            for(let keys in obj){
+            for(let keys in slots){
                if(keys == timeSlot){
                 if(obj[keys] > seats){
                 let data = obj[keys] - seats
